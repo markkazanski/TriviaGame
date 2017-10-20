@@ -38,6 +38,8 @@ var triviaGame = {
     currentQuestion: 0, //the index of the current question
     userGuess: undefined,
     questionTimer: undefined,
+    intervalId: undefined,
+    secondsLeft: 30,
 
     displayQuestion: function(){
         $("#question").text(questions[this.currentQuestion]); //Shows the current question
@@ -50,6 +52,12 @@ var triviaGame = {
             $("#answer").append(`<button class="answer-button" id="answer${i}" value="${i}">${answer[this.currentQuestion][i][0]}</button>`);
             console.log( answer[this.currentQuestion][i][0], " ", answer[this.currentQuestion][i][1] );
         }
+        ///timer
+        this.questionTimer = setTimeout(function() {
+            triviaGame.unanswered++;
+            triviaGame.displayQuestionResult(2);
+            setTimeout(triviaGame.nextQuestion, 3000);//wait
+        }, 3000); //30000
     },
 
     checkAnswer: function(guess){
@@ -87,6 +95,7 @@ var triviaGame = {
 
     getUserClicks: function(){
         $("button.answer-button").on("click", function(){ //Gets array of buttons
+            clearTimeout(triviaGame.questionTimer);
             userGuess = this.value; //gets value of clicked button
             triviaGame.checkAnswer(userGuess); //calls to check answer with value of clicked button
             console.log("Clicked value: " + this.value);
@@ -109,12 +118,24 @@ var triviaGame = {
              triviaGame.displayQuestion();
              triviaGame.displayAnswers();
              triviaGame.getUserClicks(); //capture clicks for new buttons
+             triviaGame.startTimer();
         }else{
             //gameover screen
             $("#answer").text("");
-            $("#question").html(`Game Over<br /> Your Score<br />  correct: ${this.correct} <br /> incorrect: ${this.incorrect}`);
-            console.log(`Score: correct: ${this.correct} incorrect: ${this.incorrect}`);
+            $("#question").html(`Game Over<br /> Your Score<br />  correct: ${triviaGame.correct} <br /> incorrect: ${triviaGame.incorrect} <br /> unanswered: ${triviaGame.unanswered}`);
+            console.log(`Score: correct: ${triviaGame.correct} incorrect: ${triviaGame.incorrect}`);
         }
+    },
+
+    startTimer: function(){
+        secondsLeft = 30;
+        intervalId = setInterval(triviaGame.count, 1000);
+    },
+
+    count:function(){
+        secondsLeft--;
+        $("#seconds-left").text(triviaGame.secondsLeft);
+        console.log("count");
     },
 
 };
