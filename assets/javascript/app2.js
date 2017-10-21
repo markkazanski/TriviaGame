@@ -136,7 +136,8 @@ var triviaGame = {
         }else{
             //gameover screen
             clearInterval( triviaGame.intervalID );
-            $("#answer").text("");
+            $("#seconds-left").html("<button id='restart-button' onclick='triviaGame.initialize()'>Restart Game</button>");
+            $("#answer").empty();
             $("#question").html(`Game Over<br /> Your Score<br />  correct: ${triviaGame.correct} <br /> incorrect: ${triviaGame.incorrect} <br /> unanswered: ${triviaGame.unanswered}`);
             console.log(`Score: correct: ${triviaGame.correct} incorrect: ${triviaGame.incorrect}`);
         }
@@ -161,14 +162,18 @@ var triviaGame = {
     },
 
     initialize: function(){
+        triviaGame.currentQuestion = 0;
+        triviaGame.correct = 0;
+        triviaGame.incorrect = 0;
+        triviaGame.unanswered = 0;
        triviaGame.resetTimer(); 
+       triviaGame.displayQuestion();
+       triviaGame.displayAnswers();
+       triviaGame.getUserClicks();
     },
 
 };
 
 $( document ).ready(function() {
     triviaGame.initialize();
-    triviaGame.displayQuestion();
-    triviaGame.displayAnswers();
-    triviaGame.getUserClicks();
 });
