@@ -46,31 +46,33 @@ var triviaGame = {
     //questionTimerId: undefined,
     intervalID: undefined,
     secondsStart:15,
-    secondsLeft: secondsStart,
+    secondsLeft: 0,
 
     displayQuestion: function(){
         $("#question").text(questions[this.currentQuestion]); //Shows the current question
-        console.log("Current Question: " + triviaGame.currentQuestion);
+        //console.log("Current Question: " + triviaGame.currentQuestion);
     },
 
     displayAnswers: function(){
         $("#answer").text("");
         for(var i=0; i<answer[this.currentQuestion].length; i++){ //Goes through all answers to current question
             $("#answer").append(`<button class="answer-button" id="answer${i}" value="${i}">${answer[this.currentQuestion][i][0]}</button>`);
-            console.log( answer[this.currentQuestion][i][0], " ", answer[this.currentQuestion][i][1] );
+            //console.log( answer[this.currentQuestion][i][0], " ", answer[this.currentQuestion][i][1] );
         }
 
+               intervalID = setInterval( triviaGame.count, 1000 );
         //questionTimerId = setTimeout(triviaGame.checkAnswer, 5000);
     },
 
     checkAnswer: function(guess){
        // clearTimeout(questionTimerId);
+       clearInterval( intervalID );
 
         if( guess === undefined ){ //No answer
             triviaGame.unanswered++;
             triviaGame.displayQuestionResult(2);
             setTimeout(triviaGame.nextQuestion, 3000);//wait
-            console.log("WRONG");
+            console.log("TIMEOUT");
         }else if( answer[triviaGame.currentQuestion][guess][1] === 1 ){
             //correct answer
             triviaGame.correct++;
@@ -87,7 +89,7 @@ var triviaGame = {
     },
 
     displayQuestionResult: function(result){
-        console.log("RESULT: " + result);
+        //console.log("RESULT: " + result);
         //console.log( answer[this.currentQuestion][userGuess][0] );
 
         if(result === 1){ //correct
@@ -106,8 +108,8 @@ var triviaGame = {
         $("button.answer-button").on("click", function(){ //Gets array of buttons
             userGuess = this.value; //gets value of clicked button
             triviaGame.checkAnswer(userGuess); //calls to check answer with value of clicked button
-            console.log("Clicked value: " + this.value);
-            console.log("user Guess: " + userGuess);
+            //console.log("Clicked value: " + this.value);
+            //console.log("user Guess: " + userGuess);
         });
     },
     
@@ -122,12 +124,13 @@ var triviaGame = {
     nextQuestion: function(){
         if( !triviaGame.checkGameOver() ){
              triviaGame.currentQuestion++;
-             console.log(triviaGame.currentQuestion + "Incremented current question");
+             //console.log(triviaGame.currentQuestion + "Incremented current question");
              triviaGame.displayQuestion();
              triviaGame.displayAnswers();
              triviaGame.getUserClicks(); //capture clicks for new buttons
         }else{
             //gameover screen
+            clearInterval( triviaGame.intervalID );
             $("#answer").text("");
             $("#question").html(`Game Over<br /> Your Score<br />  correct: ${triviaGame.correct} <br /> incorrect: ${triviaGame.incorrect} <br /> unanswered: ${triviaGame.unanswered}`);
             console.log(`Score: correct: ${triviaGame.correct} incorrect: ${triviaGame.incorrect}`);
@@ -135,18 +138,27 @@ var triviaGame = {
     },
 
     count: function(){
+        console.log(triviaGame.secondsLeft);
         if(triviaGame.secondsLeft > 0){
             triviaGame.secondsLeft--;
             $("#seconds-left").text(triviaGame.secondsLeft);
+            console.log(triviaGame.secondsLeft + " over 0");
         }else{
             triviaGame.secondsLeft = triviaGame.secondsStart;
             clearInterval( triviaGame.intervalID );
+            triviaGame.checkAnswer();
+            console.log(triviaGame.secondsLeft + " under 0");
         }
-    }
+    }, 
+
+    initialize: function(){
+        this.secondsLeft = this.secondsStart;
+    },
 
 };
 
 $( document ).ready(function() {
+    triviaGame.initialize();
     triviaGame.displayQuestion();
     triviaGame.displayAnswers();
     triviaGame.getUserClicks();
