@@ -59,14 +59,19 @@ var triviaGame = {
             $("#answer").append(`<button class="answer-button" id="answer${i}" value="${i}">${answer[this.currentQuestion][i][0]}</button>`);
             //console.log( answer[this.currentQuestion][i][0], " ", answer[this.currentQuestion][i][1] );
         }
-
-               intervalID = setInterval( triviaGame.count, 1000 );
+       
+        if(triviaGame.intervalID !== undefined){  //Check that timer is running
+            clearInterval( triviaGame.intervalID ); //then reset time
+        }
+        
+        triviaGame.resetTimer();    
+        triviaGame.intervalID = setInterval( triviaGame.count, 1000 ); //Start timer running, count 1/sec
         //questionTimerId = setTimeout(triviaGame.checkAnswer, 5000);
     },
 
     checkAnswer: function(guess){
        // clearTimeout(questionTimerId);
-       clearInterval( intervalID );
+       clearInterval( triviaGame.intervalID );
 
         if( guess === undefined ){ //No answer
             triviaGame.unanswered++;
@@ -140,8 +145,8 @@ var triviaGame = {
     count: function(){
         console.log(triviaGame.secondsLeft);
         if(triviaGame.secondsLeft > 0){
-            triviaGame.secondsLeft--;
             $("#seconds-left").text(triviaGame.secondsLeft);
+            triviaGame.secondsLeft--;
             console.log(triviaGame.secondsLeft + " over 0");
         }else{
             triviaGame.secondsLeft = triviaGame.secondsStart;
@@ -151,8 +156,12 @@ var triviaGame = {
         }
     }, 
 
-    initialize: function(){
+    resetTimer: function(){
         this.secondsLeft = this.secondsStart;
+    },
+
+    initialize: function(){
+       triviaGame.resetTimer(); 
     },
 
 };

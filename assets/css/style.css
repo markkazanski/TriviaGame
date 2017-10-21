@@ -1,3 +1,13 @@
+#seconds-left{
+    font-size:100px;
+    text-align:center;
+    color:#00FF00;
+    font-family: 'Press Start 2P', cursive;    
+}
+
+.jumbotron{ background-color: #000; }
+
+
 #question,
 #answer{
     font-size:35px;
@@ -10,5 +20,3 @@ button.answer-button{
     margin-right:20px;
     font-size:25px;
 }
-
-.hidden{ display:none; }
